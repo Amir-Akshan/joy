@@ -1,5 +1,4 @@
 FROM python:3.9-slim
-FROM python:3.9-slim
 
 # Set working directory
 WORKDIR /app
@@ -21,12 +20,12 @@ COPY frontend/ ./frontend/
 COPY landing.html ./
 COPY docs/ ./docs/
 
-# (Optional) copy common repo files used by the app
-COPY agent-invite-template.txt ./
-COPY agents-state.json ./
-COPY join-keys.json ./
-COPY state.json ./
-COPY state.sample.json ./
+# Ensure optional state files exist (create sensible defaults if not provided)
+RUN if [ ! -f /app/agent-invite-template.txt ]; then echo "" > /app/agent-invite-template.txt; fi && \
+    if [ ! -f /app/agents-state.json ]; then echo '[]' > /app/agents-state.json; fi && \
+    if [ ! -f /app/join-keys.json ]; then echo '{"keys": []}' > /app/join-keys.json; fi && \
+    if [ ! -f /app/state.json ]; then echo '{}' > /app/state.json; fi && \
+    if [ ! -f /app/state.sample.json ]; then echo '{}' > /app/state.sample.json; fi
 
 # Set environment variable
 ENV FLASK_ENV=production
