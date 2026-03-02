@@ -1,32 +1,29 @@
 {
   "version": 2,
-  "public": true,
+  "buildCommand": "echo 'No build needed'",
+  "installCommand": "pip install -r backend/requirements.txt",
   "builds": [
     {
       "src": "backend/app.py",
       "use": "@vercel/python",
       "config": {
         "maxLambdaSize": "15mb",
-        "runtime": "python3.9"
+        "runtime": "python3.9",
+        "includeFiles": [
+          "backend/**",
+          "frontend/**",
+          "landing.html",
+          "getting-started.html",
+          "*.json",
+          "*.md"
+        ]
       }
-    },
-    {
-      "src": "frontend/**",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "landing.html",
-      "use": "@vercel/static"
     }
   ],
   "routes": [
     {
       "src": "/static/(.*)",
-      "dest": "/frontend/$1"
-    },
-    {
-      "src": "/landing",
-      "dest": "/landing.html"
+      "dest": "backend/app.py"
     },
     {
       "src": "/(.*)",

@@ -1,0 +1,2 @@
+# Don't ignore anything - include all files for the Flask app
+# This ensures landing.html, getting-started.html, and other assets are deployed
