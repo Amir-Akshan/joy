@@ -74,6 +74,36 @@ async function loadMemo() {
   }
 }
 
+// Load tokens from Prism API and display in the memo panel
+async function loadTokens() {
+  const memoContent = document.getElementById('memo-content');
+  if (!memoContent) return;
+  try {
+    memoContent.innerHTML = '<div id="memo-placeholder">Loading tokens...</div>';
+    const url = 'https://strykr-prism.up.railway.app/crypto/trending/solana/bonding?t=' + Date.now();
+    const resp = await fetch(url, { cache: 'no-store' });
+    const data = await resp.json();
+    const tokens = data.tokens || data.data || [];
+    if (!tokens || tokens.length === 0) {
+      memoContent.innerHTML = '<div id="memo-placeholder">No tokens found</div>';
+      return;
+    }
+    // Build simple list HTML (limit to 12)
+    const list = tokens.slice(0, 12).map(t => {
+      const sym = (t.symbol || (t.symbol && t.symbol.toUpperCase()) || t.name || '').toString();
+      const name = (t.name || '').toString();
+      const mcap = t.marketCap || t.market_cap || t.market_cap_usd || t.market_cap_usd_total || '';
+      const mcapStr = mcap ? ` — $${Number(mcap).toLocaleString()}` : '';
+      return `<li class="token-item"><strong>${sym}</strong> ${name}${mcapStr}</li>`;
+    }).join('');
+
+    memoContent.innerHTML = `<ul class="token-list">${list}</ul>`;
+  } catch (e) {
+    console.error('Failed to load tokens:', e);
+    memoContent.innerHTML = '<div id="memo-placeholder">Token load failed</div>';
+  }
+}
+
 // Update loading progress
 function updateLoadingProgress() {
   loadedAssets++;
@@ -551,6 +581,9 @@ function create() {
   });
 
   loadMemo();
+  // Load tokens into the memo panel and refresh periodically
+  loadTokens();
+  setInterval(loadTokens, 30000);
   fetchStatus();
   // Force render a test Nika agent for testing
   const testNika = {
