@@ -2,11 +2,14 @@
 """Star Office UI - Backend State Service"""
 
 from flask import Flask, jsonify, send_from_directory, make_response, request, send_file
+import logging
+import traceback
 from datetime import datetime, timedelta
 import json
 import os
 import re
 import threading
+import requests
 
 # Paths (project-relative, no hardcoded absolute paths)
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -804,6 +807,35 @@ def agent_push():
 def health():
     """Health check"""
     return jsonify({"status": "ok", "timestamp": datetime.now().isoformat()})
+
+
+@app.route("/tokens/bonding", methods=["GET"])
+def proxy_bonding_tokens():
+    """Proxy endpoint for bonding tokens to avoid CORS from client-side."""
+    base = os.environ.get("PRISM_BASE_URL", "https://strykr-prism.up.railway.app")
+    try:
+        resp = requests.get(f"{base}/crypto/trending/solana/bonding", timeout=10)
+        resp.raise_for_status()
+        return jsonify(resp.json())
+    except Exception as e:
+        # Log full traceback for easier debugging in server logs
+        tb = traceback.format_exc()
+        app.logger.error(f"Error proxying bonding tokens: {e}\n{tb}")
+        return jsonify({"ok": False, "error": str(e), "trace": tb}), 500
+
+
+@app.route("/tokens/graduated", methods=["GET"])
+def proxy_graduated_tokens():
+    """Proxy endpoint for graduated tokens to avoid CORS from client-side."""
+    base = os.environ.get("PRISM_BASE_URL", "https://strykr-prism.up.railway.app")
+    try:
+        resp = requests.get(f"{base}/crypto/trending/solana/graduated", timeout=10)
+        resp.raise_for_status()
+        return jsonify(resp.json())
+    except Exception as e:
+        tb = traceback.format_exc()
+        app.logger.error(f"Error proxying graduated tokens: {e}\n{tb}")
+        return jsonify({"ok": False, "error": str(e), "trace": tb}), 500
 
 
 @app.route("/yesterday-memo", methods=["GET"])

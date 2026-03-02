@@ -80,24 +80,24 @@ async function loadTokens() {
   if (!memoContent) return;
   try {
     memoContent.innerHTML = '<div id="memo-placeholder">Loading tokens...</div>';
-    const url = 'https://strykr-prism.up.railway.app/crypto/trending/solana/bonding?t=' + Date.now();
+    const url = '/tokens/bonding?t=' + Date.now();
     const resp = await fetch(url, { cache: 'no-store' });
     const data = await resp.json();
+    if (data && data.ok === false) {
+      throw new Error(data.error || 'Proxy error');
+    }
     const tokens = data.tokens || data.data || [];
     if (!tokens || tokens.length === 0) {
       memoContent.innerHTML = '<div id="memo-placeholder">No tokens found</div>';
       return;
     }
-    // Build simple list HTML (limit to 12)
-    const list = tokens.slice(0, 12).map(t => {
-      const sym = (t.symbol || (t.symbol && t.symbol.toUpperCase()) || t.name || '').toString();
-      const name = (t.name || '').toString();
-      const mcap = t.marketCap || t.market_cap || t.market_cap_usd || t.market_cap_usd_total || '';
-      const mcapStr = mcap ? ` — $${Number(mcap).toLocaleString()}` : '';
-      return `<li class="token-item"><strong>${sym}</strong> ${name}${mcapStr}</li>`;
+    // Show compact tokens list (symbols only) centered for the memo panel
+    memoDate.textContent = '';
+    const compact = tokens.slice(0, 12).map(t => {
+      const sym = (t.symbol || '').toString().toUpperCase() || (t.address || '').toString();
+      return `<div class="memo-token">${sym}</div>`;
     }).join('');
-
-    memoContent.innerHTML = `<ul class="token-list">${list}</ul>`;
+    memoContent.innerHTML = `<div class="memo-tokens-grid">${compact}</div>`;
   } catch (e) {
     console.error('Failed to load tokens:', e);
     memoContent.innerHTML = '<div id="memo-placeholder">Token load failed</div>';
@@ -279,6 +279,45 @@ function setState(state, detail) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ state, detail })
   }).then(() => fetchStatus());
+  // manage token polling UI
+  if (state === 'writing') {
+    startTokenPolling();
+  } else {
+    stopTokenPolling(state, detail);
+  }
+}
+
+// Token polling control (started when user clicks Working)
+let tokensPollingIntervalId = null;
+let isSearchingTokens = false;
+function startTokenPolling() {
+  if (isSearchingTokens) return;
+  isSearchingTokens = true;
+  const memoContent = document.getElementById('memo-content');
+  const memoDate = document.getElementById('memo-date');
+  if (memoDate) memoDate.textContent = '';
+  if (memoContent) memoContent.innerHTML = '<div id="memo-placeholder">🔍 Searching tokens...</div>';
+  loadTokens();
+  tokensPollingIntervalId = setInterval(loadTokens, 30000);
+}
+
+function stopTokenPolling(state, detail) {
+  if (tokensPollingIntervalId) {
+    clearInterval(tokensPollingIntervalId);
+    tokensPollingIntervalId = null;
+  }
+  isSearchingTokens = false;
+  const memoContent = document.getElementById('memo-content');
+  if (!memoContent) return;
+  if (state === 'idle') {
+    memoContent.innerHTML = '<div id="memo-placeholder">Standby</div>';
+  } else if (state === 'syncing') {
+    memoContent.innerHTML = '<div id="memo-placeholder">Syncing…</div>';
+  } else if (state === 'error') {
+    memoContent.innerHTML = '<div id="memo-placeholder">Error occurred</div>';
+  } else {
+    memoContent.innerHTML = `<div id="memo-placeholder">${detail || 'Standby'}</div>`;
+  }
 }
 
 // Initialize: check WebP support first, then start game
@@ -581,9 +620,7 @@ function create() {
   });
 
   loadMemo();
-  // Load tokens into the memo panel and refresh periodically
-  loadTokens();
-  setInterval(loadTokens, 30000);
+  // Token polling will start when user clicks 'Working' (setState('writing', ...))
   fetchStatus();
   // Force render a test Nika agent for testing
   const testNika = {
