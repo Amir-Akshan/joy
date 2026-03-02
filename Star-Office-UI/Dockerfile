@@ -22,11 +22,11 @@ COPY landing.html ./
 COPY docs/ ./docs/
 
 # (Optional) copy common repo files used by the app
-COPY agent-invite-template.txt ./ || true
-COPY agents-state.json ./ || true
-COPY join-keys.json ./ || true
-COPY state.json ./ || true
-COPY state.sample.json ./ || true
+COPY agent-invite-template.txt ./
+COPY agents-state.json ./
+COPY join-keys.json ./
+COPY state.json ./
+COPY state.sample.json ./
 
 # Set environment variable
 ENV FLASK_ENV=production
