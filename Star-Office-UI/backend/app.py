@@ -221,9 +221,28 @@ if not os.path.exists(STATE_FILE):
 
 def serve_html_file(file_path):
     """Helper function to serve HTML files with proper headers"""
+    import sys
     try:
+        # Debug logging
+        print(f"[serve_html_file] Attempting to open: {file_path}", file=sys.stderr)
+        print(f"[serve_html_file] File exists: {os.path.exists(file_path)}", file=sys.stderr)
+        
+        if not os.path.exists(file_path):
+            print(f"[serve_html_file] File NOT found at: {file_path}", file=sys.stderr)
+            print(f"[serve_html_file] Currently in directory: {os.getcwd()}", file=sys.stderr)
+            print(f"[serve_html_file] ROOT_DIR is: {ROOT_DIR}", file=sys.stderr)
+            return jsonify({
+                "error": "File not found", 
+                "path": file_path,
+                "cwd": os.getcwd(),
+                "root_dir": ROOT_DIR,
+                "exists": False
+            }), 404
+        
         with open(file_path, "r", encoding="utf-8") as f:
             html = f.read()
+        
+        print(f"[serve_html_file] Successfully loaded {len(html)} bytes", file=sys.stderr)
         resp = make_response(html)
         resp.headers["Content-Type"] = "text/html; charset=utf-8"
         resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
@@ -231,21 +250,27 @@ def serve_html_file(file_path):
         resp.headers["Expires"] = "0"
         return resp
     except FileNotFoundError as e:
+        print(f"[serve_html_file] FileNotFoundError: {e}", file=sys.stderr)
         return jsonify({"error": "File not found", "path": file_path, "details": str(e)}), 404
     except Exception as e:
+        print(f"[serve_html_file] Exception: {type(e).__name__}: {e}", file=sys.stderr)
         return jsonify({"error": "Server error", "details": str(e)}), 500
 
 
 @app.route("/landing", methods=["GET"])
 def landing_page():
     """Serve the landing page"""
-    return serve_html_file(os.path.join(ROOT_DIR, "landing.html"))
+    landing_path = os.path.join(ROOT_DIR, "landing.html")
+    print(f"[landing_page] Serving from: {landing_path}", file=sys.stderr)
+    return serve_html_file(landing_path)
 
 
 @app.route("/getting-started", methods=["GET"])
 def getting_started_page():
     """Serve the getting started guide"""
-    return serve_html_file(os.path.join(ROOT_DIR, "getting-started.html"))
+    getting_started_path = os.path.join(ROOT_DIR, "getting-started.html")
+    print(f"[getting_started_page] Serving from: {getting_started_path}", file=sys.stderr)
+    return serve_html_file(getting_started_path)
 
 
 @app.route("/", methods=["GET"])
