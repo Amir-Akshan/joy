@@ -1,4 +1,19 @@
 {
-  "version": 2
+  "version": 2,
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://joy-69td.onrender.com/:path*"
+    },
+    {
+      "source": "/yesterday-memo",
+      "destination": "https://joy-69td.onrender.com/yesterday-memo"
+    },
+    {
+      "source": "/agent-push",
+      "destination": "https://joy-69td.onrender.com/agent-push"
+    }
+  ],
+  "cleanUrls": true
 }
 
