@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Star Office UI - Backend State Service"""
 
-from flask import Flask, jsonify, send_from_directory, make_response, request
+from flask import Flask, jsonify, send_from_directory, make_response, request, send_file
 from datetime import datetime, timedelta
 import json
 import os
@@ -219,55 +219,77 @@ if not os.path.exists(STATE_FILE):
     save_state(DEFAULT_STATE)
 
 
+def serve_html_file(file_path):
+    """Helper function to serve HTML files with proper headers"""
+    try:
+        with open(file_path, "r", encoding="utf-8") as f:
+            html = f.read()
+        resp = make_response(html)
+        resp.headers["Content-Type"] = "text/html; charset=utf-8"
+        resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+        resp.headers["Pragma"] = "no-cache"
+        resp.headers["Expires"] = "0"
+        return resp
+    except FileNotFoundError as e:
+        return jsonify({"error": "File not found", "path": file_path, "details": str(e)}), 404
+    except Exception as e:
+        return jsonify({"error": "Server error", "details": str(e)}), 500
+
+
 @app.route("/landing", methods=["GET"])
 def landing_page():
     """Serve the landing page"""
-    with open(os.path.join(ROOT_DIR, "landing.html"), "r", encoding="utf-8") as f:
-        html = f.read()
-    resp = make_response(html)
-    resp.headers["Content-Type"] = "text/html; charset=utf-8"
-    return resp
+    return serve_html_file(os.path.join(ROOT_DIR, "landing.html"))
 
 
 @app.route("/getting-started", methods=["GET"])
 def getting_started_page():
     """Serve the getting started guide"""
-    with open(os.path.join(ROOT_DIR, "getting-started.html"), "r", encoding="utf-8") as f:
-        html = f.read()
-    resp = make_response(html)
-    resp.headers["Content-Type"] = "text/html; charset=utf-8"
-    return resp
+    return serve_html_file(os.path.join(ROOT_DIR, "getting-started.html"))
 
 
 @app.route("/", methods=["GET"])
 def index():
     """Serve the pixel office UI with built-in version cache busting"""
-    with open(os.path.join(FRONTEND_DIR, "index.html"), "r", encoding="utf-8") as f:
-        html = f.read()
-    html = html.replace("{{VERSION_TIMESTAMP}}", VERSION_TIMESTAMP)
-    resp = make_response(html)
-    resp.headers["Content-Type"] = "text/html; charset=utf-8"
-    return resp
+    try:
+        with open(os.path.join(FRONTEND_DIR, "index.html"), "r", encoding="utf-8") as f:
+            html = f.read()
+        html = html.replace("{{VERSION_TIMESTAMP}}", VERSION_TIMESTAMP)
+        resp = make_response(html)
+        resp.headers["Content-Type"] = "text/html; charset=utf-8"
+        resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+        return resp
+    except Exception as e:
+        return {"error": f"Failed to load dashboard: {str(e)}"}, 500
 
 
 @app.route("/join", methods=["GET"])
 def join_page():
     """Serve the agent join page"""
-    with open(os.path.join(FRONTEND_DIR, "join.html"), "r", encoding="utf-8") as f:
-        html = f.read()
-    resp = make_response(html)
-    resp.headers["Content-Type"] = "text/html; charset=utf-8"
-    return resp
+    return serve_html_file(os.path.join(FRONTEND_DIR, "join.html"))
 
 
 @app.route("/invite", methods=["GET"])
 def invite_page():
     """Serve human-facing invite instruction page"""
-    with open(os.path.join(FRONTEND_DIR, "invite.html"), "r", encoding="utf-8") as f:
-        html = f.read()
-    resp = make_response(html)
-    resp.headers["Content-Type"] = "text/html; charset=utf-8"
-    return resp
+    return serve_html_file(os.path.join(FRONTEND_DIR, "invite.html"))
+
+
+@app.route("/static/<path:filepath>", methods=["GET"])
+def serve_static_files(filepath):
+    """Serve static files from frontend directory"""
+    try:
+        file_path = os.path.join(FRONTEND_DIR, filepath)
+        # Security: prevent directory traversal
+        if not os.path.abspath(file_path).startswith(os.path.abspath(FRONTEND_DIR)):
+            return {"error": "Access denied"}, 403
+        
+        if os.path.isfile(file_path):
+            return send_from_directory(FRONTEND_DIR, filepath)
+        else:
+            return {"error": "File not found"}, 404
+    except Exception as e:
+        return {"error": str(e)}, 500
 
 
 DEFAULT_AGENTS = [
@@ -825,6 +847,104 @@ def set_state_endpoint():
         return jsonify({"status": "ok"})
     except Exception as e:
         return jsonify({"status": "error", "msg": str(e)}), 500
+
+
+# Error handlers for better debugging
+@app.errorhandler(404)
+def not_found(error):
+    """Handle 404 - Not Found errors"""
+    # Try to serve index.html for SPA routes
+    landing_html = os.path.join(FRONTEND_DIR, "landing.html")
+    if os.path.exists(landing_html) and request.path == "/landing":
+        try:
+            with open(landing_html, "r", encoding="utf-8") as f:
+                response = make_response(f.read())
+                response.headers["Content-Type"] = "text/html; charset=utf-8"
+                return response, 200
+        except Exception:
+            pass
+    
+    getting_started_html = os.path.join(FRONTEND_DIR, "getting-started.html")
+    if os.path.exists(getting_started_html) and request.path == "/getting-started":
+        try:
+            with open(getting_started_html, "r", encoding="utf-8") as f:
+                response = make_response(f.read())
+                response.headers["Content-Type"] = "text/html; charset=utf-8"
+                return response, 200
+        except Exception:
+            pass
+    
+    # Return 404 as JSON for API calls
+    if request.path.startswith("/api") or request.accept_mimetypes.get("application/json"):
+        return jsonify({
+            "error": "Not Found",
+            "path": request.path,
+            "message": "The requested resource was not found"
+        }), 404
+    
+    # Return 404 as HTML
+    return """
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>404 - Not Found</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background: #0f172a;
+                color: #ffd700;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                margin: 0;
+            }
+            .container {
+                text-align: center;
+            }
+            h1 {
+                font-size: 3em;
+                margin: 0;
+            }
+            p {
+                font-size: 1.2em;
+                margin: 10px 0;
+            }
+            a {
+                color: #ffd700;
+                text-decoration: none;
+                border: 2px solid #ffd700;
+                padding: 10px 20px;
+                border-radius: 5px;
+                display: inline-block;
+                margin-top: 20px;
+            }
+            a:hover {
+                background: #ffd700;
+                color: #0f172a;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>404</h1>
+            <p>Page Not Found</p>
+            <p>The page you're looking for doesn't exist.</p>
+            <a href="/">Go to Dashboard</a>
+        </div>
+    </body>
+    </html>
+    """, 404
+
+
+@app.errorhandler(500)
+def server_error(error):
+    """Handle 500 - Server error"""
+    return jsonify({
+        "error": "Internal Server Error",
+        "message": str(error),
+        "status": 500
+    }), 500
 
 
 if __name__ == "__main__":
