@@ -1,4 +1,5 @@
 FROM python:3.9-slim
+FROM python:3.9-slim
 
 # Set working directory
 WORKDIR /app
@@ -17,10 +18,15 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application files
 COPY backend/ ./backend/
 COPY frontend/ ./frontend/
-COPY landing.html .
+COPY landing.html ./
 COPY docs/ ./docs/
-COPY *.json *.md *.txt 2>/dev/null || true
-COPY *.sh 2>/dev/null || true
+
+# (Optional) copy common repo files used by the app
+COPY agent-invite-template.txt ./ || true
+COPY agents-state.json ./ || true
+COPY join-keys.json ./ || true
+COPY state.json ./ || true
+COPY state.sample.json ./ || true
 
 # Set environment variable
 ENV FLASK_ENV=production

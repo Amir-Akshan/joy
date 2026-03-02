@@ -973,11 +973,13 @@ def server_error(error):
 
 
 if __name__ == "__main__":
+    import os
     print("=" * 50)
     print("Star Office UI - Backend State Service")
     print("=" * 50)
     print(f"State file: {STATE_FILE}")
-    print("Listening on: http://0.0.0.0:18791")
+    port = int(os.environ.get("PORT", "18791"))
+    print(f"Listening on: http://0.0.0.0:{port}")
     print("=" * 50)
-    
-    app.run(host="0.0.0.0", port=18791, debug=False)
+    debug_mode = os.environ.get("FLASK_DEBUG", "false").lower() in ("1", "true", "yes")
+    app.run(host="0.0.0.0", port=port, debug=debug_mode)
