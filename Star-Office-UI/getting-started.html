@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Getting Started - Star's Pixel Office</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #ffd700;
+            --secondary: #1f2937;
+            --accent: #e94560;
+            --text: #ffffff;
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        nav {
+            background: rgba(15, 23, 42, 0.95);
+            padding: 1rem 2rem;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+        }
+
+        nav .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        nav a {
+            color: var(--text);
+            text-decoration: none;
+            margin-left: 2rem;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: var(--primary);
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        h1, h2 {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+        }
+
+        h3 {
+            color: var(--primary);
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: #cbd5e1;
+        }
+
+        code {
+            background: var(--card-bg);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            color: var(--primary);
+            font-size: 0.9em;
+        }
+
+        pre {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 1rem 0;
+            border-left: 3px solid var(--primary);
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+            color: #cbd5e1;
+        }
+
+        ul, ol {
+            margin-left: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--bg);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(255, 215, 0, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 215, 0, 0.1);
+        }
+
+        .info-box {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-left: 3px solid var(--primary);
+            border-radius: 6px;
+            margin: 1.5rem 0;
+        }
+
+        .info-box strong {
+            color: var(--primary);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+        }
+
+        th, td {
+            padding: 0.8rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        th {
+            background: var(--card-bg);
+            color: var(--primary);
+        }
+
+        tr:hover {
+            background: rgba(255, 215, 0, 0.05);
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            border-top: 1px solid rgba(255, 215, 0, 0.1);
+            margin-top: 3rem;
+            color: #64748b;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <a href="/" class="logo">⭐ Star's Office</a>
+            <div>
+                <a href="/">Home</a>
+                <a href="/index.html">Dashboard</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>🚀 Getting Started with Star's Pixel Office</h1>
+
+        <p>Welcome! This guide will help you deploy and use the collaborative agent dashboard.</p>
+
+        <h2>📋 Quick Links</h2>
+        <div class="btn-group">
+            <a href="/index.html" class="btn btn-primary">Open Dashboard</a>
+            <a href="/landing" class="btn btn-secondary">Back to Landing</a>
+            <a href="/join" class="btn btn-secondary">Join as Agent</a>
+        </div>
+
+        <h2>⚡ Deployment Options</h2>
+
+        <h3>1️⃣ Vercel (Recommended)</h3>
+        <p>Deploy in minutes with zero configuration:</p>
+        <ol>
+            <li>Push code to GitHub</li>
+            <li>Go to <code>vercel.com</code></li>
+            <li>Click "New Project" → Import GitHub repository</li>
+            <li>Vercel auto-detects <code>vercel.json</code> configuration</li>
+            <li>Click "Deploy" and your app goes live</li>
+        </ol>
+
+        <div class="info-box">
+            <strong>✅ Vercel Benefits:</strong> Free tier, auto-scaling, HTTPS, custom domain, analytics dashboard
+        </div>
+
+        <h3>2️⃣ Docker</h3>
+        <p>Containerized deployment for any platform:</p>
+        <pre><code># Build image
+docker build -t star-office-ui .
+
+# Run locally
+docker run -p 18791:18791 star-office-ui
+
+# Or use Docker Compose
+docker-compose up</code></pre>
+
+        <p><strong>Deploy to:</strong> Railway, Render, Fly.io, AWS ECS, DigitalOcean, or any Docker-compatible platform</p>
+
+        <h3>3️⃣ Traditional Server (VPS)</h3>
+        <p>Deploy to Linux VPS with Nginx reverse proxy:</p>
+        <pre><code># 1. Install dependencies
+sudo apt-get install python3 python3-pip nginx
+
+# 2. Install Python packages
+pip3 install -r backend/requirements.txt
+
+# 3. Configure Nginx (proxy to port 18791)
+# 4. Start Flask app
+python3 backend/app.py</code></pre>
+
+        <h2>🌐 Available Routes</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Route</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>/</code></td>
+                    <td>Main dashboard (interactive game)</td>
+                </tr>
+                <tr>
+                    <td><code>/landing</code></td>
+                    <td>Landing page with features</td>
+                </tr>
+                <tr>
+                    <td><code>/join</code></td>
+                    <td>Agent join/leave form</td>
+                </tr>
+                <tr>
+                    <td><code>/invite</code></td>
+                    <td>Invitation guide page</td>
+                </tr>
+                <tr>
+                    <td><code>/agents</code></td>
+                    <td>API: Get agents list (JSON)</td>
+                </tr>
+                <tr>
+                    <td><code>/status</code></td>
+                    <td>API: Get main status (JSON)</td>
+                </tr>
+                <tr>
+                    <td><code>/agent-push</code></td>
+                    <td>API: Push agent status (POST)</td>
+                </tr>
+                <tr>
+                    <td><code>/health</code></td>
+                    <td>Health check endpoint</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>🔧 Local Development</h2>
+
+        <h3>Setup</h3>
+        <pre><code># Clone repository
+git clone https://github.com/you/star-office-ui.git
+cd star-office-ui
+
+# Create virtual environment
+python3 -m venv venv
+source venv/bin/activate  # or: venv\Scripts\activate (Windows)
+
+# Install dependencies
+pip install -r backend/requirements.txt
+
+# Run server
+python backend/app.py</code></pre>
+
+        <p><strong>Access at:</strong></p>
+        <ul>
+            <li>http://localhost:18791/landing (landing page)</li>
+            <li>http://localhost:18791/ (dashboard)</li>
+            <li>http://localhost:18791/join (join form)</li>
+        </ul>
+
+        <h2>🎮 Using the Dashboard</h2>
+
+        <h3>Main Features</h3>
+        <ul>
+            <li><strong>Status Buttons:</strong> Change Star's state (Standby, Writing, Researching, etc.)</li>
+            <li><strong>Guest List:</strong> Monitor agents in real-time</li>
+            <li><strong>Memo Panel:</strong> View yesterday's journal entry</li>
+            <li><strong>Join Key:</strong> Agents use this to connect</li>
+            <li><strong>Approval System:</strong> Control who joins</li>
+        </ul>
+
+        <h3>Agent States</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>State</th>
+                    <th>Location</th>
+                    <th>Meaning</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Standby</td>
+                    <td>Breakroom</td>
+                    <td>Available, waiting for tasks</td>
+                </tr>
+                <tr>
+                    <td>Writing</td>
+                    <td>Desk</td>
+                    <td>Working/organizing</td>
+                </tr>
+                <tr>
+                    <td>Researching</td>
+                    <td>Desk</td>
+                    <td>Gathering information</td>
+                </tr>
+                <tr>
+                    <td>Executing</td>
+                    <td>Desk</td>
+                    <td>Running processes</td>
+                </tr>
+                <tr>
+                    <td>Syncing</td>
+                    <td>Server Room</td>
+                    <td>Backing up/synchronizing</td>
+                </tr>
+                <tr>
+                    <td>Error</td>
+                    <td>Error Zone</td>
+                    <td>Something went wrong</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>🔐 Security</h2>
+
+        <div class="info-box">
+            <strong>⚠️ Important:</strong> By default, the app uses local file storage. For production:
+            <ul style="margin-top: 1rem;">
+                <li>Use environment variables for sensitive data</li>
+                <li>Implement HTTPS (Vercel does this automatically)</li>
+                <li>Rotate join keys regularly</li>
+                <li>Use strong passwords for agent access</li>
+                <li>Consider database migration for state persistence</li>
+            </ul>
+        </div>
+
+        <h2>📊 API Reference</h2>
+
+        <h3>Get Agents</h3>
+        <pre><code>GET /agents
+Response: [{ agentId, name, state, area, authStatus, ... }]</code></pre>
+
+        <h3>Join Agent</h3>
+        <pre><code>POST /join-agent
+Body: { name, joinKey, state?, detail? }
+Response: { ok, agentId, authStatus }</code></pre>
+
+        <h3>Push Status</h3>
+        <pre><code>POST /agent-push
+Body: { agentId, joinKey, state, detail? }
+Response: { ok, agentId, area }</code></pre>
+
+        <h2>🐛 Troubleshooting</h2>
+
+        <h3>Port already in use</h3>
+        <pre><code># Change port in app.py:
+app.run(host="0.0.0.0", port=8000)  # Change 18791 to 8000</code></pre>
+
+        <h3>Images not loading</h3>
+        <p>Ensure <code>frontend/</code> directory is properly served via <code>/static/</code> routes.</p>
+
+        <h3>Agents not appearing</h3>
+        <p>Check if <code>agents-state.json</code> exists and has valid permissions.</p>
+
+        <h2>📚 Further Reading</h2>
+        <ul>
+            <li><a href="/DEPLOYMENT.md" style="color: var(--primary);">Complete Deployment Guide</a></li>
+            <li><a href="/SKILL.md" style="color: var(--primary);">OpenClaw Skill Guide</a></li>
+            <li><a href="/docs/" style="color: var(--primary);">Technical Documentation</a></li>
+        </ul>
+
+        <div class="info-box">
+            <strong>🎉 Ready to deploy?</strong>
+            <p>Start with Vercel (simplest), or choose Docker/VPS for more control. All options are just a few minutes away!</p>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Star's Pixel Office | <a href="/" style="color: var(--primary);">Back to Dashboard</a></p>
+    </footer>
+</body>
+</html>

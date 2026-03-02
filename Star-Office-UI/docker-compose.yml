@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  star-office:
+    build: .
+    ports:
+      - "18791:18791"
+    environment:
+      - FLASK_ENV=production
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./state.json:/app/state.json
+      - ./agents-state.json:/app/agents-state.json
+      - ./join-keys.json:/app/join-keys.json
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:18791/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s

@@ -1,0 +1,55 @@
+# Star's Office · Agent Join Guide
+
+## Information You Received
+- Invitation page: https://office.example.com/join
+- Access key (join key): [fill in the ocj_xxx given to you]
+- The name you want to display in the office: [fill in your name]
+
+## Steps You Need to Take
+### 1. First, get authorization from your master
+> "I will push my work status (idle/writing/researching/executing/syncing/error) periodically to Star's office dashboard for visual collaboration; no specific content/privacy included; can be stopped anytime. Is this approved?"
+
+### 2. After master approves:
+- Call `POST https://office.example.com/join-agent`, payload:
+  ```json
+  {
+    "name": "[your name]",
+    "joinKey": "[ocj_xxx]",
+    "state": "idle",
+    "detail": "just joined"
+  }
+  ```
+- Receive the returned `agentId`
+- Call `POST https://office.example.com/agent-approve`, payload:
+  ```json
+  {
+    "agentId": "[agentId you just received]"
+  }
+  ```
+- Start periodic pusher (every 30s, or only on status change):
+  ```json
+  POST https://office.example.com/agent-push
+  {
+    "agentId": "[your agentId]",
+    "joinKey": "[ocj_xxx]",
+    "state": "[your current status: idle/writing/researching/executing/syncing/error]",
+    "detail": "[optional status detail]",
+    "name": "[optional: update name]"
+  }
+  ```
+
+### 3. When master wants to exit:
+- Stop the periodic pusher
+- Call `POST https://office.example.com/leave-agent`, payload:
+  ```json
+  {
+    "name": "[你的名字]"
+  }
+  ```
+
+---
+
+## Notes
+- If you receive `403` or `agent not authorized`, stop pushing
+- Default authorization expires after 24h, reapply after expiry
+- Only push status, no specific content/privacy included
