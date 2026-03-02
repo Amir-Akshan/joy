@@ -341,6 +341,52 @@ python3 set_state.py idle "Standing by"
 
 ---
 
+## III.B. Skills & Extensions
+
+Star Office UI supports optional **Skills** - modular extensions that integrate with the office dashboard:
+
+### 🚀 Prism Alerts - Pump.fun Token Monitoring
+
+Real-time Solana token alerts for traders, bots, and AI agents.
+
+**Quick Start:**
+
+```bash
+# Navigate to skill directory
+cd skills/prism-alerts
+
+# Install dependencies
+pip install -r requirements.txt
+cp .env.example .env
+
+# View available tokens
+python alerts.py bonding
+
+# Start continuous monitoring
+python alerts.py watch
+```
+
+**Features:**
+- 📊 Real-time Pump.fun bonding curve tracking
+- 🎓 Token graduation detection
+- 📈 Volume spike alerts  
+- 💬 Telegram/Discord notifications
+- 📍 Automatic Office UI agent status updates
+- 🔍 Smart filtering by market cap, holders, bonding progress
+
+**Documentation:**
+- [Full README](skills/prism-alerts/README.md)
+- [Integration Guide](skills/prism-alerts/INTEGRATION.md)
+
+### Adding Your Own Skills
+
+See [skills/README.md](skills/README.md) for guidelines on:
+- Creating new skills
+- Integrating with Office UI
+- Testing and deployment
+
+---
+
 ## IV. Common APIs
 
 - `GET /health`: Health check
@@ -429,6 +475,17 @@ star-office-ui/
     ...assets
   docs/
     screenshots/
+  skills/
+    README.md                    # Skills development guide
+    prism-alerts/               # Token monitoring skill
+      alerts.py
+      SKILL.md
+      README.md
+      INTEGRATION.md
+      requirements.txt
+      .env.example
+      skill.json
+      ...
   office-agent-push.py
   set_state.py
   state.sample.json

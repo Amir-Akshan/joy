@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  prism-alerts:
+    build: .
+    container_name: prism-alerts
+    environment:
+      PRISM_URL: https://strykr-prism.up.railway.app
+      COMMAND: watch
+      POLL_INTERVAL: 30
+      MIN_MARKET_CAP: 5000
+      MAX_MARKET_CAP: 100000
+      OFFICE_UI_URL: http://host.docker.internal:18791
+      OFFICE_UI_AGENT_NAME: trading-bot
+      # Optional: Telegram
+      ENABLE_TELEGRAM: "false"
+      # Optional: Discord
+      ENABLE_DISCORD: "false"
+      LOG_LEVEL: INFO
+    restart: unless-stopped
+    networks:
+      - star-office-network
+    command: watch
+
+networks:
+  star-office-network:
+    driver: bridge

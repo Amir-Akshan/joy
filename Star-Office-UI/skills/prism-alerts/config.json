@@ -1,0 +1,41 @@
+{
+  "aliases": {
+    "bonding": "python alerts.py bonding",
+    "graduated": "python alerts.py graduated", 
+    "watch": "python alerts.py watch",
+    "trending": "python alerts.py trending",
+    "test": "python examples.py"
+  },
+  "directories": {
+    "docs": "Documentation and guides",
+    "config": "Configuration templates"
+  },
+  "integrations": {
+    "star-office-ui": {
+      "endpoint": "/agent-push",
+      "agent": "trading-bot",
+      "updates": {
+        "on_new_token": "state=executing, status=Token monitoring",
+        "on_graduation": "state=syncing, status=Graduation detected",
+        "on_volume_spike": "state=executing, status=Volume spike alert"
+      }
+    },
+    "telegram": {
+      "requires": "TELEGRAM_BOT_TOKEN, TELEGRAM_CHANNEL_ID",
+      "enable": "ENABLE_TELEGRAM=true"
+    },
+    "discord": {
+      "requires": "DISCORD_BOT_TOKEN, DISCORD_CHANNEL_ID", 
+      "enable": "ENABLE_DISCORD=true"
+    }
+  },
+  "api": {
+    "prism": {
+      "base_url": "https://strykr-prism.up.railway.app",
+      "endpoints": {
+        "bonding": "/crypto/trending/solana/bonding",
+        "graduated": "/crypto/trending/solana/graduated"
+      }
+    }
+  }
+}

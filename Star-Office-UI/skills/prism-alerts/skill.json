@@ -1,0 +1,61 @@
+{
+  "name": "prism-alerts",
+  "version": "1.1.2",
+  "description": "Real-time Pump.fun token alerts using Strykr PRISM API - new launches, graduations, volume spikes. Perfect for trading bots and AI agents monitoring Solana memecoins.",
+  "author": {
+    "name": "Next Frontier",
+    "url": "https://x.com/NextXFrontier"
+  },
+  "integrator": {
+    "name": "Star Office UI",
+    "url": "https://github.com/ringhyacinth/Star-Office-UI"
+  },
+  "repository": "https://github.com/NextFrontierBuilds/prism-alerts-skill",
+  "keywords": [
+    "prism",
+    "pump-fun",
+    "solana",
+    "alerts",
+    "memecoins",
+    "trading",
+    "telegram-bot",
+    "discord-bot",
+    "ai-agent"
+  ],
+  "config": {
+    "PRISM_URL": {
+      "description": "PRISM API base URL",
+      "default": "https://strykr-prism.up.railway.app"
+    },
+    "ENABLE_TELEGRAM": {
+      "description": "Enable Telegram alerts",
+      "default": false
+    },
+    "ENABLE_DISCORD": {
+      "description": "Enable Discord alerts",
+      "default": false
+    },
+    "POLL_INTERVAL": {
+      "description": "Poll interval in seconds",
+      "default": 30
+    },
+    "MIN_MARKET_CAP": {
+      "description": "Minimum market cap to alert",
+      "default": 5000
+    },
+    "MAX_MARKET_CAP": {
+      "description": "Maximum market cap to alert",
+      "default": 100000
+    }
+  },
+  "triggers": [
+    "pump fun trending",
+    "new pump tokens",
+    "bonding tokens",
+    "graduated tokens",
+    "volume spike alert"
+  ],
+  "platforms": ["windows", "macos", "linux"],
+  "category": "trading",
+  "status": "active"
+}
